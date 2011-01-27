@@ -8,7 +8,8 @@ class Theme {
         'name' => 'Theme',
         'slug' => 'theme',
         'types' => array(),
-        'menus' => array()
+        'menus' => array(),
+        'images' => array()
     );
 
     function  __construct($options) {
@@ -19,6 +20,7 @@ class Theme {
         define('THEME_DIR', get_template_directory());
         define('THEME_URL', get_template_directory_uri().'/');
         define('THEME_JS',THEME_URL.'js/');
+        define('FRAMEWORK_URL',WP_CONTENT_URL.'/themes//framework/');
         define('THEME_FRAMEWORK',ABSPATH . 'wp-content/themes/framework/');
         define('THEME_ADMIN',THEME_FRAMEWORK.'admin/');
         define('THEME_HELPERS',THEME_FRAMEWORK.'helpers/');
@@ -33,6 +35,7 @@ class Theme {
         $this->types();
         $this->admin();
         $this->options();
+        $this->images();
 
         require(THEME_FRAMEWORK.'functions/functions.php');
     }
@@ -64,10 +67,11 @@ class Theme {
         if (function_exists('add_theme_support')) {
             add_theme_support('custom-header');
             add_theme_support('custom-background');
-            add_theme_support('post-thumbnails', array('post', 'page', 'portfolio', 'slideshow'));
+            add_theme_support('post-thumbnails');
             add_theme_support('automatic-feed-links');
             add_theme_support('editor-style');
         }
+        if ( isset($this->options['sidebar']) && function_exists('register_sidebar') )  register_sidebar($this->options['sidebar']);
     }
 
     function admin() {
@@ -82,6 +86,21 @@ class Theme {
             load_theme_textdomain( 'graf', THEME_ADMIN . '/languages/admin' );
         }else{
             load_theme_textdomain( 'graf', THEME_ADMIN . '/languages' );
+        }
+    }
+    
+    function images(){
+        foreach($this->options['images'] as $post_type=>$formats){
+            if($post_type=='thumbnail'){
+                set_post_thumbnail_size( $formats[0], $formats[1], $formats[2] ); 
+            }else{
+                
+                if ((isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
+                    foreach($formats as $f){
+                        add_image_size($f[0], $f[1], $f[2], $f[3]);
+                    }
+                }
+            }
         }
     }
     

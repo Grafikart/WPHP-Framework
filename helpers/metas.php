@@ -24,7 +24,6 @@ class metas{
     }
     
     function save($post_id){
-        print_r($post_id); print_r($_POST); 
         if ( defined('DOING_AUTOSAVE') && DOING_AUTOSAVE ){
             return $post_id;
         }
@@ -57,11 +56,11 @@ class metas{
     function render(){
         global $post; 
         foreach($this->options as $v) {
-            $v['default'] = isset($v['default']) ? $v['default'] : '';
+            $v['value'] = isset($v['default']) ? $v['default'] : '';
             if (isset($v['id'])) {
-                $default = get_post_meta($post->ID, $v['id'], true);
-                if ($default != "") {
-                    $v['default'] = $default;
+                $value = get_post_meta($post->ID, $v['id'], true);
+                if ($value != "") {
+                    $v['value'] = $value;
                 }
             }
             $file = THEME_HELPERS.'metas/'.$v['type'].'.php';
