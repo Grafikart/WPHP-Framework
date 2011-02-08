@@ -7,7 +7,7 @@ class optionsGenerator{
     var $save_options; 
 
     function optionsGenerator($page){
-        include(THEME_MENUS.$page.'.php');
+        include(THEME_OPTIONS.$page.'.php');
         $this->options = $options['options'];
         $this->name = $options['name'];
         $this->slug = $options['slug'];

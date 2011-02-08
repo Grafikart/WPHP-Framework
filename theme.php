@@ -9,10 +9,14 @@ class Theme {
         'slug' => 'theme',
         'types' => array(),
         'menus' => array(),
-        'images' => array()
+        'images' => array(),
+        'sidebar' => array(),
+        'images' => array(),
+        'options' => array(),
+        'help' => true
     );
-
-    function  __construct($options) {
+    
+    function __construct($options){
         $this->options = $options + $this->options;
         define('THEME_NAME', $this->options['name']);
         define('THEME_SLUG', $this->options['slug']);
@@ -20,42 +24,60 @@ class Theme {
         define('THEME_DIR', get_template_directory());
         define('THEME_URL', get_template_directory_uri().'/');
         define('THEME_JS',THEME_URL.'js/');
-        define('FRAMEWORK_URL',WP_CONTENT_URL.'/themes//framework/');
+        define('FRAMEWORK_URL',WP_CONTENT_URL.'/themes/framework/');
         define('THEME_FRAMEWORK',ABSPATH . 'wp-content/themes/framework/');
         define('THEME_ADMIN',THEME_FRAMEWORK.'admin/');
         define('THEME_HELPERS',THEME_FRAMEWORK.'helpers/');
         define('THEME_OPTIONS',THEME_DIR.'/options/');
         define('THEME_TYPES',THEME_DIR.'/types/');
-        
-        add_action('after_setup_theme', array(&$this, 'supports'));
-        add_action('init',array(&$this, 'language'));
-
         $this->supports();
+        add_action('init',array(&$this, 'init'));
+    }
+
+    function  init() {        
+        $this->language(); 
         $this->menus();
         $this->types();
         $this->admin();
-        $this->options();
         $this->images();
+        $this->options();
+        $this->sidebar();
 
         require(THEME_FRAMEWORK.'functions/functions.php');
     }
 
+    /**
+     * Stocke dans $theme_options l'ensemble des options des panneaux d'options
+     * */
     function options(){
         global $theme_options;
-        require(THEME_OPTIONS.'structure.php');
         $theme_options = array();
-        foreach($menus as $m){
-            foreach($m['pages'] as $name=>$page){
-                $theme_options[$page] = get_option(THEME_SLUG.'_'.$page);
+        foreach($this->options['options'] as $o){
+            foreach($o['pages'] as $name=>$page){
+                require(THEME_DIR.'/options/'.$o['slug'].'_'.$page.'.php');
+                $default = array();
+                foreach($options['options'] as $suboptions){
+                    if(isset($suboptions['default'])){
+                        $default[$suboptions['id']] = $suboptions['default']; 
+                    }
+                }
+                $theme_options[$page] = (array)get_option(THEME_SLUG.'_'.$page) + $default;
             }
         }
     }
 
+    /**
+     * Enregistre la liste des menus
+     * **/
     function menus(){
         add_theme_support('menus');
         register_nav_menus($this->options['menus']);
     }
 
+    /**
+     * Ajoute les custom post type et les infos associées
+     * inclue les fichiers dans THEME/types/post-type.php (ne fait rien de plus)
+     * **/
     function types(){
         require(THEME_FRAMEWORK.'helpers/metas.php');
         foreach($this->options['types'] as $v){
@@ -63,6 +85,9 @@ class Theme {
         }
     }
 
+    /**
+     * Ajoute le support de toutes les fonctionnalitées Wordpress possible
+     * */
     function supports() {
         if (function_exists('add_theme_support')) {
             add_theme_support('custom-header');
@@ -71,32 +96,58 @@ class Theme {
             add_theme_support('automatic-feed-links');
             add_theme_support('editor-style');
         }
-        if ( isset($this->options['sidebar']) && function_exists('register_sidebar') )  register_sidebar($this->options['sidebar']);
     }
-
-    function admin() {
-        if (is_admin()) {
-            require_once (THEME_FRAMEWORK . 'admin.php');
-            $admin = new AdminTheme();
+    
+    /**
+     * Déclare toutes les sidebar définit dans le _construct
+     * */
+    function sidebar(){
+        if ( isset($this->options['sidebar']) && function_exists('register_sidebar') ) {
+            foreach($this->options['sidebar'] as $name => $args){
+                $args['name'] = $name;
+                register_sidebar($args);
+            }
         }
     }
 
+    /**
+     * Charge l'objet qui s'occupe des interfaces coté backoffice
+     * */
+    function admin() {
+        if (is_admin()) {
+            require_once (THEME_FRAMEWORK . 'admin.php');
+            $options = array(
+                'menus' => $this->options['options'],
+                'help' => $this->options['help']
+            );
+            $admin = new AdminTheme($options);
+        }
+    }
+
+    /**
+     * Permet la traduction des éléments du framework
+     * */
     function language(){
+        // Traduction non prévu pour le moment
+        /*
         if (is_admin()) {
             load_theme_textdomain( 'graf', THEME_ADMIN . '/languages/admin' );
         }else{
             load_theme_textdomain( 'graf', THEME_ADMIN . '/languages' );
         }
+        */
     }
     
+    /**
+     * Gestion des différents formats d'image
+     * */
     function images(){
         foreach($this->options['images'] as $post_type=>$formats){
-            if($post_type=='thumbnail'){
-                set_post_thumbnail_size( $formats[0], $formats[1], $formats[2] ); 
-            }else{
-                
-                if ((isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
-                    foreach($formats as $f){
+            if ((isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
+                foreach($formats as $f){
+                    if($f[0]=='thumb'){
+                        set_post_thumbnail_size( $f[1], $f[2], $f[3] ); 
+                    }else{
                         add_image_size($f[0], $f[1], $f[2], $f[3]);
                     }
                 }
