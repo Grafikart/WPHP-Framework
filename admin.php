@@ -41,14 +41,16 @@ class AdminTheme{
 
     // Ajoute un menu pour la doc du framework
     function helpMenus(){
-	add_menu_page('Framework','Framework',10,'framework_help',array(&$this,'loadHelpPanel'));
+	add_menu_page('Framework','Framework',10,'framework_intro',array(&$this,'loadHelpPanel'));
 	$helpPages = array(
+	    'Introduction' => 'intro',
 	    'Pour commencer' => 'help',
 	    'Les Post type' =>'posttype',
-	    'Les Options' =>'options'
+	    'Les Options' =>'options',
+            'Les fonctions' =>'functions'
 	);
 	foreach($helpPages as $name=>$page){
-	    add_submenu_page('framework_help',$name,$name,1,'framework_'.$page,array(&$this,'loadHelpPanel'));
+	    add_submenu_page('framework_intro',$name,$name,1,'framework_'.$page,array(&$this,'loadHelpPanel'));
 	}
     }
     
