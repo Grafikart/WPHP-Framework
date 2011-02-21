@@ -16,7 +16,7 @@ class Theme {
         'help' => true
     );
     
-    function __construct($options){
+    function __construct($options = array()){
         $this->options = $options + $this->options;
         define('THEME_NAME', $this->options['name']);
         define('THEME_SLUG', $this->options['slug']);
