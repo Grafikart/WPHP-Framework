@@ -13,6 +13,8 @@ class Theme {
         'sidebar' => array(),
         'images' => array(),
         'options' => array(),
+        'widgets' => array(),
+        'commentFields' => array(),
         'help' => true
     );
     
@@ -32,6 +34,9 @@ class Theme {
         define('THEME_TYPES',THEME_DIR.'/types/');
         $this->supports();
         add_action('init',array(&$this, 'init'));
+        add_action('widgets_init',array(&$this, 'widgets'));
+        add_action( 'comment_post',array(&$this, 'commentMetas') );
+
     }
 
     function  init() {        
@@ -137,7 +142,16 @@ class Theme {
         }
         */
     }
-    
+
+    /**
+     * Charge les objets Widgets personnalisés
+     */
+    function widgets(){
+        foreach($this->options['widgets'] as $w){
+            require(THEME_DIR.'/widgets/'.$w.'.php');
+            register_widget($w.'_Widget');
+        }
+    }
     /**
      * Gestion des différents formats d'image
      * */
@@ -152,6 +166,12 @@ class Theme {
                     }
                 }
             }
+        }
+    }
+
+    function commentMetas($comment_id){
+        foreach($this->options['commentFields'] as $v){
+            add_comment_meta( $comment_id, $v, str_replace('@','',$_POST[$v]), true );
         }
     }
     

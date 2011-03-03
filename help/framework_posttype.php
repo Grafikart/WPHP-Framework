@@ -62,7 +62,6 @@
                     'query_var' => true,
                     'rewrite' => array( 'slug' => 'type', 'with_front' => false)
                 ));  
-        ?&gt;
         </textarea>
         <br clear="all"/>
         
