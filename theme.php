@@ -20,14 +20,19 @@ class Theme {
     
     function __construct($options = array()){
         $this->options = $options + $this->options;
+        $framework_path = str_replace('\\','/',__FILE__);
+        $framework_path = str_replace('/theme.php','',$framework_path);
+        $framework_path = str_replace('/theme.php','',$framework_path);
+        $framework_path = str_replace(str_replace('\\','/',ABSPATH),'',$framework_path);
+        $framework_path = WP_CONTENT_URL.str_replace('wp-content','',$framework_path).'/';
+        
         define('THEME_NAME', $this->options['name']);
         define('THEME_SLUG', $this->options['slug']);
-
         define('THEME_DIR', get_template_directory());
         define('THEME_URL', get_template_directory_uri().'/');
         define('THEME_JS',THEME_URL.'js/');
-        define('FRAMEWORK_URL',WP_CONTENT_URL.'/themes/framework/');
-        define('THEME_FRAMEWORK',ABSPATH . 'wp-content/themes/framework/');
+        define('FRAMEWORK_URL',$framework_path);
+        define('THEME_FRAMEWORK',str_replace('theme.php','',__FILE__));
         define('THEME_ADMIN',THEME_FRAMEWORK.'admin/');
         define('THEME_HELPERS',THEME_FRAMEWORK.'helpers/');
         define('THEME_OPTIONS',THEME_DIR.'/options/');
