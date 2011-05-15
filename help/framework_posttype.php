@@ -103,7 +103,7 @@ array(
 		"type" => "text"
 	)
 ));
-?&gt;;
+?&gt;
         </textarea></p>
     
         <p>L'objet meta permet de créer une ou plusieurs boite de meta personalisée qui sont associé à un type de post. </p>
