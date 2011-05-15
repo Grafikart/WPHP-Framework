@@ -41,7 +41,7 @@ class AdminTheme{
 
     // Ajoute un menu pour la doc du framework
     function helpMenus(){
-	add_menu_page('Framework','Framework',10,'framework_intro',array(&$this,'loadHelpPanel'));
+	add_menu_page('Framework','Framework','read','framework_intro',array(&$this,'loadHelpPanel'));
 	$helpPages = array(
 	    'Introduction' => 'intro',
 	    'Pour commencer' => 'help',
@@ -50,7 +50,7 @@ class AdminTheme{
             'Les fonctions' =>'functions'
 	);
 	foreach($helpPages as $name=>$page){
-	    add_submenu_page('framework_intro',$name,$name,1,'framework_'.$page,array(&$this,'loadHelpPanel'));
+	    add_submenu_page('framework_intro',$name,$name,'read','framework_'.$page,array(&$this,'loadHelpPanel'));
 	}
     }
     
