@@ -15,7 +15,8 @@ class Theme {
         'options' => array(),
         'widgets' => array(),
         'commentFields' => array(),
-        'help' => true
+        'help' => true,
+        'shortcodes' => array()
     );
     
     function __construct($options = array()){
@@ -38,6 +39,7 @@ class Theme {
         define('THEME_OPTIONS',THEME_DIR.'/options/');
         define('THEME_TYPES',THEME_DIR.'/types/');
         $this->supports();
+        $this->shortcodes(); 
         add_action('init',array(&$this, 'init'));
         add_action('widgets_init',array(&$this, 'widgets'));
         add_action( 'comment_post',array(&$this, 'commentMetas') );
@@ -162,7 +164,7 @@ class Theme {
      * */
     function images(){
         foreach($this->options['images'] as $post_type=>$formats){
-            if ($_GET['page'] == 'ajax-thumbnail-rebuild' || (isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
+            if ((isset($_GET['page']) && $_GET['page'] == 'ajax-thumbnail-rebuild') || (isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
                 foreach($formats as $f){
                     if($f[0]=='thumb'){
                         set_post_thumbnail_size( $f[1], $f[2], $f[3] ); 
@@ -173,7 +175,31 @@ class Theme {
             }
         }
     }
-
+    
+    /**
+     * Gestion des shortcodes
+     * */
+    function shortcodes(){
+        foreach($this->options['shortcodes'] as $k=>$v){
+            add_shortcode($k, array(&$this,'shortcode') );
+        }
+    }
+    
+    function shortcode($atts, $content=null, $code=""){
+        $code = $this->options['shortcodes'][$code]; 
+        if(!is_array($code)){
+            return do_shortcode(str_replace('%content%',$content,$this->options['shortcodes'][$code]));
+        }else{
+            $retour = $code[0]; 
+            unset($code[0]);
+            extract( shortcode_atts( $code, $atts ));
+            foreach($code as $k=>$v){ 
+                $retour = str_replace('%'.$k.'%',$$k,$retour); 
+            }
+            return do_shortcode(str_replace('%content%',$content,$retour));
+        }
+    }
+    
     function commentMetas($comment_id){
         foreach($this->options['commentFields'] as $v){
             add_comment_meta( $comment_id, $v, str_replace('@','',$_POST[$v]), true );
