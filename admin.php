@@ -56,7 +56,7 @@ class AdminTheme{
     
     // Charge une page d'aide
     function loadHelpPanel(){
-	require THEME_FRAMEWORK.'help/'.esc_attr($_GET['page'].'.php';
+	require THEME_FRAMEWORK.'help/'.esc_attr($_GET['page']).'.php';
     }
 
 }
