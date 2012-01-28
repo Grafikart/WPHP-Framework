@@ -36,7 +36,7 @@ class AdminTheme{
     // Charge une page dans le panneau d'option
     function loadOptionPanel(){
         require(THEME_FRAMEWORK.'helpers/optionsgenerator.php');
-        new optionsGenerator($_GET['page']);
+        new optionsGenerator(esc_attr($_GET['page']));
     }
 
     // Ajoute un menu pour la doc du framework
@@ -56,7 +56,7 @@ class AdminTheme{
     
     // Charge une page d'aide
     function loadHelpPanel(){
-	require THEME_FRAMEWORK.'help/'.$_GET['page'].'.php';
+	require THEME_FRAMEWORK.'help/'.esc_attr($_GET['page']).'.php';
     }
 
 }

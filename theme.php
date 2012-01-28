@@ -164,7 +164,7 @@ class Theme {
      * */
     function images(){
         foreach($this->options['images'] as $post_type=>$formats){
-            if ((isset($_GET['page']) && $_GET['page'] == 'ajax-thumbnail-rebuild') || (isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
+            if ((isset(esc_attr($_GET['page'])) && esc_attr($_GET['page']) == 'ajax-thumbnail-rebuild') || (isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
                 foreach($formats as $f){
                     if($f[0]=='thumb'){
                         set_post_thumbnail_size( $f[1], $f[2], $f[3] ); 

@@ -14,7 +14,7 @@ function image_select_callback() {
 	die();
 }
 
-if(isset($_GET['option_upload']) || isset($_POST['option_upload'])) {
+if(isset(esc_attr($_GET['option_upload'])) || isset($_POST['option_upload'])) {
     add_filter('attachment_fields_to_edit', 'filter_attachment_fields_to_edit', 10, 2);
     add_filter('media_upload_tabs', 'disable_medias_tabs');
     add_filter('media_upload_form_url', 'upload_form_url', 10, 2);
@@ -42,7 +42,7 @@ function filter_attachment_fields_to_edit($form_fields, $post){
         }
     }
     $form_fields['buttons'] = array(
-        'tr' => "\t\t<tr><td></td><td><input type='button' class='button-primary' onclick='window.parent.themeadmin.insertMedia(".$post->ID.",\"". $_GET['target']."\"); return false;' value='" . __( 'Select') . "' />$delete</td></tr>\n"
+        'tr' => "\t\t<tr><td></td><td><input type='button' class='button-primary' onclick='window.parent.themeadmin.insertMedia(".$post->ID.",\"". esc_attr($_GET['target'])."\"); return false;' value='" . __( 'Select') . "' />$delete</td></tr>\n"
     );
     return $form_fields;
 }
@@ -50,7 +50,7 @@ function disable_flash_upload(){
     return false;
 }
 function upload_form_url($form_action_url, $type){
-    return $form_action_url.'&option_upload=1&target='.$_GET['target'];
+    return $form_action_url.'&option_upload=1&target='.esc_attr($_GET['target']);
 }
 function disable_medias_tabs($tabs) {
     unset($tabs['type_url'], $tabs['gallery']);
