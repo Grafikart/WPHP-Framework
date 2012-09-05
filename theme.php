@@ -18,7 +18,7 @@ class Theme {
         'help' => true,
         'shortcodes' => array()
     );
-    
+
     function __construct($options = array()){
         $this->options = $options + $this->options;
         $framework_path = str_replace('\\','/',__FILE__);
@@ -26,7 +26,7 @@ class Theme {
         $framework_path = str_replace('/theme.php','',$framework_path);
         $framework_path = str_replace(str_replace('\\','/',ABSPATH),'',$framework_path);
         $framework_path = WP_CONTENT_URL.str_replace('wp-content','',$framework_path).'/';
-        
+
         define('THEME_NAME', $this->options['name']);
         define('THEME_SLUG', $this->options['slug']);
         define('THEME_DIR', get_template_directory());
@@ -39,15 +39,15 @@ class Theme {
         define('THEME_OPTIONS',THEME_DIR.'/options/');
         define('THEME_TYPES',THEME_DIR.'/types/');
         $this->supports();
-        $this->shortcodes(); 
+        $this->shortcodes();
         add_action('init',array(&$this, 'init'));
         add_action('widgets_init',array(&$this, 'widgets'));
         add_action( 'comment_post',array(&$this, 'commentMetas') );
 
     }
 
-    function  init() {        
-        $this->language(); 
+    function  init() {
+        $this->language();
         $this->menus();
         $this->types();
         $this->admin();
@@ -70,7 +70,7 @@ class Theme {
                 $default = array();
                 foreach($options['options'] as $suboptions){
                     if(isset($suboptions['default'])){
-                        $default[$suboptions['id']] = $suboptions['default']; 
+                        $default[$suboptions['id']] = $suboptions['default'];
                     }
                 }
                 $theme_options[$page] = (array)get_option(THEME_SLUG.'_'.$page) + $default;
@@ -109,7 +109,7 @@ class Theme {
             add_theme_support('editor-style');
         }
     }
-    
+
     /**
      * Déclare toutes les sidebar définit dans le _construct
      * */
@@ -164,10 +164,10 @@ class Theme {
      * */
     function images(){
         foreach($this->options['images'] as $post_type=>$formats){
-            if ((isset($_GET['page']) && $_GET['page'] == 'ajax-thumbnail-rebuild') || (isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
+            if ((isset($_POST['action']) && $_POST['action'] == 'ajax_thumbnail_rebuild') || (isset($_GET['page']) && $_GET['page'] == 'ajax-thumbnail-rebuild') || (isset($_REQUEST['post_id']) && get_post_type($_REQUEST['post_id']) == $post_type) || (isset($_REQUEST['action']) && $_REQUEST['action'] == 'delete')) {
                 foreach($formats as $f){
                     if($f[0]=='thumb'){
-                        set_post_thumbnail_size( $f[1], $f[2], $f[3] ); 
+                        set_post_thumbnail_size( $f[1], $f[2], $f[3] );
                     }else{
                         add_image_size($f[0], $f[1], $f[2], $f[3]);
                     }
@@ -175,7 +175,7 @@ class Theme {
             }
         }
     }
-    
+
     /**
      * Gestion des shortcodes
      * */
@@ -184,26 +184,26 @@ class Theme {
             add_shortcode($k, array(&$this,'shortcode') );
         }
     }
-    
+
     function shortcode($atts, $content=null, $code=""){
-        $code = $this->options['shortcodes'][$code]; 
+        $code = $this->options['shortcodes'][$code];
         if(!is_array($code)){
             return do_shortcode(str_replace('%content%',$content,$this->options['shortcodes'][$code]));
         }else{
-            $retour = $code[0]; 
+            $retour = $code[0];
             unset($code[0]);
             extract( shortcode_atts( $code, $atts ));
-            foreach($code as $k=>$v){ 
-                $retour = str_replace('%'.$k.'%',$$k,$retour); 
+            foreach($code as $k=>$v){
+                $retour = str_replace('%'.$k.'%',$$k,$retour);
             }
             return do_shortcode(str_replace('%content%',$content,$retour));
         }
     }
-    
+
     function commentMetas($comment_id){
         foreach($this->options['commentFields'] as $v){
             add_comment_meta( $comment_id, $v, str_replace('@','',$_POST[$v]), true );
         }
     }
-    
+
 }

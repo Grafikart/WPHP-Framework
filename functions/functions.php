@@ -19,7 +19,7 @@ function get_theme_option($page,$name){
 **/
 function get_attachments(){
     global $post;
-    $args = array( 'post_type' => 'attachment', 'numberposts' => -1, 'post_status' => null, 'post_parent' =>  $post->ID ); 
+    $args = array( 'post_type' => 'attachment', 'numberposts' => -1, 'post_status' => null, 'post_parent' =>  $post->ID , 'orderby' => 'menu_order','order' => 'ASC'); 
     $attachments =  get_posts($args);
     return $attachments;  
 }
