@@ -12,7 +12,7 @@ themeadmin = {
                         jQuery("#"+target).val(src);
                         jQuery("#"+target+"_preview").html('<a class="thickbox" href="'+src+'?"><img src="'+src+'"/></a>');
                 }
-                $('#TB_overlay,#TB_window').remove();
+                jQuery('#TB_overlay,#TB_window').remove();
         });
 
     }
