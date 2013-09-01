@@ -3,4 +3,5 @@
 </div>
 <div class="meta-box-item-content">
     <textarea name="<?php echo $id; ?>" id="<?php echo $id; ?>" style="width:100%"><?php echo $value; ?></textarea>
+    <p><?php echo $comment; ?></p>
 </div>

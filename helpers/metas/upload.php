@@ -14,5 +14,6 @@
        href="media-upload.php?&post_id=<?php echo $post->ID; ?>&target=<?php echo $id; ?>&option_upload=1&type=image&TB_iframe=1&width=640&height=644">
         Upload
     </a>
+    <p><?php echo $comment; ?></p>
 </div>
 <div style="clear:both;"></div>
