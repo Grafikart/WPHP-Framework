@@ -7,5 +7,5 @@
 			<option value="<?php echo $id; ?>" <?php if($id==$value){ echo 'selected'; } ?>><?php echo $v; ?></option>
 		<?php endforeach; ?>
 	</select><br />
-	<p><?php echo $commnet; ?></p>
+	<?php if( isset ( $comment )) : ?><p><?php echo $commnet; ?></p><?php endif; ?>
 </div>
