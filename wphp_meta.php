@@ -1,20 +1,20 @@
 <?php
-class metas{
+class wphp_meta{
 
-    var $conf = array(
-	'id' => '',
-	'title' => '',
-	'pages' => '',
-	'context' => '',
-	'priority' => '',
+    public $conf = array(
+        'id' => '',
+        'title' => '',
+        'pages' => '',
+        'context' => '',
+        'priority' => '',
     );
-    var $options;
+    public $fields;
 
-    function metas($conf,$options){
+    function __construct($conf,$fields){
         $this->conf     =      $conf + $this->conf;
-        $this->options  =       $options;
+        $this->fields  =       $fields;
         add_action('admin_init', array(&$this, 'create'));
-	add_action('save_post', array(&$this, 'save'));
+        add_action('save_post', array(&$this, 'save'));
     }
 
     function create(){
@@ -39,7 +39,7 @@ class metas{
         if (! wp_verify_nonce($_POST[$this->conf['id'] . '_noncename'], plugin_basename(__FILE__))) {
                 return $post_id;
         }
-        foreach($this->options as $v) {
+        foreach($this->fields as $v) {
             if (isset($v['id']) && ! empty($v['id'])) {
                 $value = $_POST[$v['id']];
                 if (get_post_meta($post_id, $v['id']) == "") {
@@ -55,7 +55,7 @@ class metas{
 
     function render(){
         global $post;
-        foreach($this->options as $v) {
+        foreach($this->fields as $v) {
             if(is_array($v)){
                 $v['value'] = isset($v['default']) ? $v['default'] : '';
                 if (isset($v['id'])) {
@@ -64,14 +64,14 @@ class metas{
                         $v['value'] = $value;
                     }
                 }
-                $file = THEME_HELPERS.'metas/'.$v['type'].'.php';
+                $file = dirname(__FILE__) .'/helpers/metas/'.$v['type'].'.php';
                 extract($v);
                 include($file);
             }else{
                 echo $v;
             }
         }
-	echo '<input type="hidden" name="' . $this->conf['id'] . '_noncename" id="' . $this->conf['id'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
+    echo '<input type="hidden" name="' . $this->conf['id'] . '_noncename" id="' . $this->conf['id'] . '_noncename" value="' . wp_create_nonce(plugin_basename(__FILE__)) . '" />';
 
     }
 
