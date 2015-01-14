@@ -10,5 +10,10 @@ class WPHP{
     }
 
 }
+
+if (is_admin()) {
+    wp_enqueue_script('customadminjs', get_template_directory_uri() . '/wphp/js/admin.js');
+}
+
 require 'wphp_widget.php';
 require 'wphp_meta.php';
