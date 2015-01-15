@@ -11,9 +11,11 @@ class WPHP{
 
 }
 
-if (is_admin()) {
+function wphp_scripts($hook) {
     wp_enqueue_script('customadminjs', get_template_directory_uri() . '/wphp/js/admin.js');
 }
+add_action( 'admin_enqueue_scripts', 'wphp_scripts' );
+
 
 require 'wphp_widget.php';
 require 'wphp_meta.php';
