@@ -1,5 +1,10 @@
-WPHP Framework
+
+WPHP Framework (abandonné !)
 =============
+
+Par manque de temps je n'entretiendrais plus ce dépôt, un nouveau framework mieux maintenu et plus poussé est disponible [themosis](http://framework.themosis.com/)
+
+
 
 WPHP Framework est un framework qui permet d'automatiser certaines opérations récurentes de Wordpress 3 comme la création de panneau d'options ou de metadonnées personnalisées.
 
